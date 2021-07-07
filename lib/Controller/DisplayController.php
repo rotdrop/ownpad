@@ -184,13 +184,18 @@ class DisplayController extends Controller {
         $policy = new ContentSecurityPolicy();
 
         if($this->config->getAppValue('ownpad', 'ownpad_etherpad_enable', 'no') !== 'no') {
-            $policy->addAllowedFrameDomain($this->config->getAppValue('ownpad', 'ownpad_etherpad_host', ''));
-            $policy->addAllowedChildSrcDomain($this->config->getAppValue('ownpad', 'ownpad_etherpad_host', ''));
+
+            $urlParts = parse_url($this->config->getAppValue('ownpad', 'ownpad_etherpad_host', ''));
+            $etherpadDomain = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port']) ? ':'.$urlParts['port'] : '');
+            $policy->addAllowedFrameDomain($etherpadDomain);
+            $policy->addAllowedChildSrcDomain($etherpadDomain);
         }
 
         if($this->config->getAppValue('ownpad', 'ownpad_ethercalc_enable', 'no') !== 'no') {
-            $policy->addAllowedFrameDomain($this->config->getAppValue('ownpad', 'ownpad_ethercalc_host', ''));
-            $policy->addAllowedChildSrcDomain($this->config->getAppValue('ownpad', 'ownpad_ethercalc_host', ''));
+            $urlParts = parse_url($this->config->getAppValue('ownpad', 'ownpad_ethercalc_host', ''));
+            $ethercalcDomain = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port']) ? ':'.$urlParts['port'] : '');
+            $policy->addAllowedFrameDomain($ethercalcDomain);
+            $policy->addAllowedChildSrcDomain($ethercalcDomain);
         }
 
         $response->setContentSecurityPolicy($policy);
